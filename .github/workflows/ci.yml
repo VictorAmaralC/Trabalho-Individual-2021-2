@@ -28,3 +28,31 @@ jobs:
       - name: Build project
         working-directory: ./aplicacao
         run: docker-compose up -d
+
+  lint:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Create the docker network
+        working-directory: ./aplicacao
+        run: docker network create gces-network
+
+      - name: Run the docker aplication
+        working-directory: ./aplicacao
+        run: docker-compose run biblioteca-pessoal bash -c "gem install rubocop; rubocop --fail-level F"
+
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Create the docker network
+      working-directory: ./aplicacao
+      run: docker network create gces-network
+
+    - name: Run tests
+      working-directory: ./aplicacao
+      run: docker-compose run biblioteca-pessoal bash -c "rails db:reset; rspec"
